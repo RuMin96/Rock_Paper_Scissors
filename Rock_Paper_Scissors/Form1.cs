@@ -12,22 +12,220 @@ namespace Rock_Paper_Scissors
 {
     public partial class Form1 : Form
     {
-        public int rounds = 3;
-        public int timePerRound = 6; 
-        string[] AIchoice = { "rock", "paper", "scissor", "rock", "scissor", "paper" };
-        public int randomNumber;
-        string command;
+
+
+        int rounds = 3;
+        int timerPerRound = 6; 
+
+        bool gameover = false;
+
+        string[] CPUchoiceList = { "rock", "paper", "scissor", "rock", "scissor", "paper" };
+
+        int randomNumber = 0;
+
         Random rnd = new Random();
+
+        string CPUchoice;
+
         string playerChoice;
-        int playerWins = 0;
-        int AIwins = 0;
+
+        int playerwins;
+        int AIwins;
+
 
         public Form1()
         {
             InitializeComponent();
-            timer1.Enabled = true;
+            countDownTimer.Enabled = true;
             playerChoice = "none";
+            txtTime.Text = "5";
         }
+
+        private void btnRock_Click(object sender, EventArgs e)
+        {
+            picPlayer.Image = Properties.Resources.Камень;
+            playerChoice = "rock";
+        }
+
+        private void btnPaper_Click(object sender, EventArgs e)
+        {
+            picPlayer.Image = Properties.Resources.Бумага;
+            playerChoice = "paper";
+        }
+
+        private void btnScissors_Click(object sender, EventArgs e)
+        {
+            picPlayer.Image = Properties.Resources.Ножницы;
+            playerChoice = "scissor";
+        }
+
+        private void countDownTimer_Tick(object sender, EventArgs e)
+        {
+
+            timerPerRound -= 1;
+
+            txtTime.Text = timerPerRound.ToString();
+            roundsText.Text = "Rounds: " + rounds;
+
+            if (timerPerRound < 1)
+            {
+                countDownTimer.Enabled = false;
+                timerPerRound = 6;
+
+                randomNumber = rnd.Next(0, CPUchoiceList.Length);
+
+                CPUchoice = CPUchoiceList[randomNumber];
+
+                switch (CPUchoice)
+                {
+                    case "rock":
+                        picCPU.Image = Properties.Resources.Камень;
+                        break;
+                    case "paper":
+                        picCPU.Image = Properties.Resources.Бумага;
+                        break;
+                    case "scissor":
+                        picCPU.Image = Properties.Resources.Ножницы;
+                        break;
+                }
+
+
+                if (rounds > 0)
+                {
+                    checkGame();
+                }
+                else
+                {
+                    if (playerwins > AIwins)
+                    {
+                        MessageBox.Show("Player Wins This Game");
+                    }
+                    else
+                    {
+                        MessageBox.Show("CPU Wins This Game");
+                    }
+
+                    gameover = true;
+                }
+
+
+            }
+        }
+        private void checkGame()
+        {
+
+            // AI and player win rules
+
+            if (playerChoice == "rock" && CPUchoice == "paper")
+            {
+
+                AIwins += 1;
+
+                rounds -= 1;
+
+                MessageBox.Show("CPU Wins, Paper Covers Rocks");
+
+            }
+            else if (playerChoice == "scissor" && CPUchoice == "rock")
+            {
+                AIwins += 1;
+
+                rounds -= 1;
+
+                MessageBox.Show("CPU Wins, Rock Breaks Scissors");
+            }
+            else if (playerChoice == "paper" && CPUchoice == "scissor")
+            {
+
+                AIwins += 1;
+
+                rounds -= 1;
+
+                MessageBox.Show("CPU Wins, Scissor cuts paper");
+
+            }
+            else if (playerChoice == "rock" && CPUchoice == "scissor")
+            {
+
+                playerwins += 1;
+
+                rounds -= 1;
+
+                MessageBox.Show("Player Wins, Rock Breaks Scissors");
+
+            }
+            else if (playerChoice == "paper" && CPUchoice == "rock")
+            {
+
+                playerwins += 1;
+
+                rounds -= 1;
+
+                MessageBox.Show("Player Wins, Paper Covers Rocks");
+
+            }
+            else if (playerChoice == "scissor" && CPUchoice == "paper")
+            {
+                playerwins += 1;
+
+                rounds -= 1;
+
+                MessageBox.Show("Player Wins, Scissor cuts paper");
+
+            }
+            else if (playerChoice == "none")
+            {
+                MessageBox.Show("Make your Choice");
+            }
+            else
+            {
+                MessageBox.Show("Draw");
+
+            }
+
+            startNextRound();
+        }
+
+        public void startNextRound()
+        {
+
+            if (gameover)
+            {
+
+
+
+                return;
+            }
+
+            txtMessage.Text = "Player: " + playerwins + " - " + "CPU: " + AIwins;
+
+            playerChoice = "none";
+
+            countDownTimer.Enabled = true;
+
+            picPlayer.Image = Properties.Resources.Вопрос;
+            picCPU.Image = Properties.Resources.Вопрос;
+        }
+
+        private void restartGame(object sender, EventArgs e)
+        {
+            playerwins = 0;
+            AIwins = 0;
+            rounds = 3;
+            txtMessage.Text = "Player: " + playerwins + " - " + "CPU: " + AIwins;
+
+            playerChoice = "none";
+            txtTime.Text = "5";
+
+            countDownTimer.Enabled = true;
+
+            picPlayer.Image = Properties.Resources.Вопрос;
+            picCPU.Image = Properties.Resources.Вопрос;
+
+            gameover = false;
+        }
+
+      
 
         private void Form1_Load(object sender, EventArgs e)
         {
